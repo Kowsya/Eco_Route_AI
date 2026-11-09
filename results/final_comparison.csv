@@ -1,0 +1,4 @@
+approach,MAE_Wh,RMSE_Wh,avg_latency_ms,p95_latency_ms,throughput_req_per_s,DT_share_%,RF_share_%,est_compute_cost_per_1000_req_USD
+DT only,62.103,101.554,0.33,0.359,3030.9,100.0,0.0,8.33e-06
+RF only,63.225,99.934,1.749,1.891,571.7,0.0,100.0,4.416e-05
+EcoRoute,61.052,99.185,1.105,2.272,904.7,76.0,24.0,2.791e-05

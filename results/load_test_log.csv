@@ -1,0 +1,11 @@
+label,mode,requests,workers,errors,avg_latency_ms,p95_latency_ms,throughput_req_s,rf_share_percent
+cloud-baseline,ecoroute,300,5,0,361.5,572.8,13.8,23.3
+drift-demo,ecoroute,100,5,0,371.3,559.5,13.4,54.0
+A maxinst=1 conc=5,ecoroute,400,30,0,481.4,1379.1,51.7,25.2
+B conc=2,ecoroute,400,30,0,1142.2,7409.9,21.8,25.2
+B conc=40,ecoroute,400,30,0,715.6,1738.6,40.6,25.2
+C cold first request,ecoroute,1,1,0,450.8,450.8,2.2,0.0
+C warm requests,ecoroute,20,1,0,720.1,1931.6,1.4,30.0
+D dt,dt,400,10,0,585.8,1459.0,16.5,0.0
+D rf,rf,400,10,0,666.9,1620.6,14.6,100.0
+D ecoroute,ecoroute,400,10,0,707.5,1817.1,13.8,25.2

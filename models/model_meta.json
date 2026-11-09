@@ -1,0 +1,34 @@
+{
+  "decision_tree_params": {
+    "max_depth": 8,
+    "min_samples_split": 2,
+    "min_samples_leaf": 20
+  },
+  "random_forest_params": {
+    "max_depth": 8,
+    "min_samples_leaf": 10
+  },
+  "n_estimators": 100,
+  "features": [
+    "lights",
+    "RH_1",
+    "RH_2",
+    "RH_3",
+    "RH_out",
+    "Windspeed",
+    "Visibility",
+    "hour",
+    "dayofweek"
+  ],
+  "split": {
+    "train": 13814,
+    "val": 2960,
+    "test": 2961
+  },
+  "router": {
+    "margin_Wh": 30,
+    "cost_weight": 1.0,
+    "max_depth": 3,
+    "trained_on": "validation split"
+  }
+}

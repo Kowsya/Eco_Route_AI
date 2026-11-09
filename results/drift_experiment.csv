@@ -1,0 +1,4 @@
+dataset,overall_status,max_PSI,most_drifted_feature,DT_MAE,RF_MAE
+In-distribution (train sample),Normal,0.004,Windspeed,48.06,45.34
+Real test period (seasonal),Warning,0.4878,RH_1,62.1,63.22
+Simulated drift,Warning,8.2702,RH_1,121.7,122.45

@@ -1,0 +1,12 @@
+# Files that must NOT be copied into the Docker image
+data/
+results/
+tests/
+monitoring/
+.git/
+.github/
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env

@@ -1,0 +1,4 @@
+feature_set,n_features,DT_cv_MAE,RF_cv_MAE
+A: all temperature + humidity + weather + time,15,69.6,63.35
+B: no absolute temperature (our choice),9,56.95,55.9
+C: lights + indoor humidity + time only,6,56.85,55.23

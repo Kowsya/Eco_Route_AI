@@ -1,0 +1,17 @@
+# Log-based DISTRIBUTION metric: turns the latency_ms field in our JSON logs into a
+# metric whose p50/p95/p99 you can chart in Cloud Monitoring.
+# Create with:
+#   gcloud logging metrics create ecoroute_latency_ms --config-from-file=monitoring/latency_metric.yaml
+name: ecoroute_latency_ms
+description: Server-side latency (ms) of successful /predict calls
+filter: resource.type="cloud_run_revision" AND resource.labels.service_name="ecoroute-ai" AND jsonPayload.event="predict"
+valueExtractor: EXTRACT(jsonPayload.latency_ms)
+metricDescriptor:
+  metricKind: DELTA
+  valueType: DISTRIBUTION
+  unit: ms
+bucketOptions:
+  exponentialBuckets:
+    numFiniteBuckets: 20
+    growthFactor: 1.5
+    scale: 1

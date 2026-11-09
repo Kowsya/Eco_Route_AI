@@ -1,0 +1,15 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Secrets / credentials - NEVER commit these
+.env
+*.json.key
+*-key.json
+service-account*.json
+# OS / editor
+.DS_Store
+.vscode/
+# NOTE: models/*.pkl ARE committed on purpose (small, needed by CI + Docker)

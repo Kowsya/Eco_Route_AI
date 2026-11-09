@@ -1,0 +1,823 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoRoute AI | Smart Energy Prediction</title>
+
+  <style>
+    :root {
+      --green: #16865a;
+      --dark: #123b2d;
+      --blue: #2563eb;
+      --bg: #f3f7f5;
+      --white: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #dce7e1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(120deg, #123b2d, #16865a);
+      color: white;
+      padding: 24px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    header p {
+      margin: 7px 0 0;
+      color: #d9f5e7;
+      font-size: 14px;
+    }
+
+    .status {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #dot {
+      height: 10px;
+      width: 10px;
+      background: #aaa;
+      border-radius: 50%;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h2 {
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+
+    .welcome p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.25fr 0.85fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.035);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: var(--dark);
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 7px;
+      color: var(--muted);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      color: var(--text);
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid #b7e5d0;
+      border-color: var(--green);
+    }
+
+    .mode {
+      margin-top: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .primary:hover {
+      background: #106c47;
+    }
+
+    .secondary {
+      background: #e8f3ed;
+      color: var(--dark);
+    }
+
+    .secondary:hover {
+      background: #d5e9dd;
+    }
+
+    .result-card {
+      min-height: 180px;
+    }
+
+    .prediction {
+      font-size: 42px;
+      font-weight: bold;
+      color: var(--green);
+      margin: 12px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .dt {
+      background: #16865a;
+    }
+
+    .rf {
+      background: #c47a16;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .error {
+      color: #dc2626;
+      white-space: pre-line;
+    }
+
+    .stats {
+      margin-top: 20px;
+    }
+
+    .stats table, .history table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    td, th {
+      text-align: left;
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+    }
+
+    .history {
+      margin-top: 22px;
+    }
+
+    .history h3 {
+      margin-top: 0;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 25px;
+    }
+
+    @media(max-width: 800px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width: 500px) {
+      .fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>🌱 EcoRoute AI</h1>
+    <p>Smart Home Energy Prediction & Intelligent Model Routing</p>
+  </div>
+
+  <div class="status">
+    <span id="dot"></span>
+    <span id="statusText">Checking service...</span>
+  </div>
+</header>
+
+<main>
+
+  <div class="welcome">
+    <h2>Energy Prediction Dashboard</h2>
+    <p>Enter your smart-home readings to predict appliance energy consumption.</p>
+  </div>
+
+  <div class="dashboard">
+
+    <!-- INPUT SECTION -->
+    <section class="card">
+      <h3>⚡ Enter Sensor Readings</h3>
+
+      <div class="fields" id="fields"></div>
+
+      <div class="mode">
+        <label for="mode">AI Model Routing Mode</label>
+        <select id="mode">
+          <option value="ecoroute">EcoRoute - Intelligent Routing</option>
+          <option value="dt">Decision Tree Only</option>
+          <option value="rf">Random Forest Only</option>
+        </select>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="predictBtn">
+          Predict Energy Usage
+        </button>
+
+        <button class="secondary" data-preset="night">
+          Quiet Night
+        </button>
+
+        <button class="secondary" data-preset="evening">
+          Busy Evening
+        </button>
+
+        <button class="secondary" data-preset="weekend">
+          Weekend
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULT SECTION -->
+    <div>
+      <section class="card result-card">
+        <h3>📊 Prediction Result</h3>
+
+        <div id="result" class="muted">
+          Enter readings and click Predict Energy Usage.
+        </div>
+      </section>
+
+      <section class="card stats">
+        <h3>📈 Live Monitoring</h3>
+
+        <div id="stats" class="muted">
+          Loading statistics...
+        </div>
+
+        <div class="buttons">
+          <button class="secondary" id="refreshBtn">
+            Refresh Statistics
+          </button>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <section class="card history">
+    <h3>🕒 Recent Predictions</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Mode</th>
+          <th>Prediction (Wh)</th>
+          <th>Model</th>
+          <th>Latency (ms)</th>
+        </tr>
+      </thead>
+
+      <tbody id="history"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  EcoRoute AI | Machine Learning Based Smart Home Energy Prediction
+  <br><br>
+  Predictions are estimates of energy consumption per 10 minutes.
+</footer>
+
+<script>
+
+  // Sensor input fields. Names must match the backend API.
+
+  const FIELDS = [
+    {key:"lights", label:"Lighting Energy (Wh)", min:0, max:200, step:1, value:10},
+    {key:"RH_1", label:"Kitchen Humidity (%)", min:0, max:100, step:0.1, value:45.5},
+    {key:"RH_2", label:"Living Room Humidity (%)", min:0, max:100, step:0.1, value:40.2},
+    {key:"RH_3", label:"Laundry Room Humidity (%)", min:0, max:100, step:0.1, value:41},
+    {key:"RH_out", label:"Outside Humidity (%)", min:0, max:100, step:0.1, value:80},
+    {key:"Windspeed", label:"Wind Speed (m/s)", min:0, max:60, step:0.1, value:4},
+    {key:"Visibility", label:"Visibility (km)", min:0, max:100, step:0.1, value:40},
+    {key:"hour", label:"Hour of Day (0-23)", min:0, max:23, step:1, value:18}
+  ];
+
+  const DAYS = [
+    "Monday", "Tuesday", "Wednesday",
+    "Thursday", "Friday", "Saturday", "Sunday"
+  ];
+
+  const PRESETS = {
+    night: {
+      lights:0, RH_1:38, RH_2:36.5, RH_3:39,
+      RH_out:70, Windspeed:2, Visibility:50,
+      hour:3, dayofweek:1
+    },
+
+    evening: {
+      lights:40, RH_1:52, RH_2:46, RH_3:48,
+      RH_out:85, Windspeed:6, Visibility:30,
+      hour:19, dayofweek:4
+    },
+
+    weekend: {
+      lights:10, RH_1:44, RH_2:41, RH_3:42,
+      RH_out:60, Windspeed:3, Visibility:40,
+      hour:13, dayofweek:6
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+
+  // Build input form dynamically.
+
+  function buildForm() {
+
+    const container = $("fields");
+
+    FIELDS.forEach(f => {
+
+      const wrapper = document.createElement("div");
+
+      const label = document.createElement("label");
+      label.htmlFor = f.key;
+      label.textContent = f.label;
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.id = f.key;
+      input.min = f.min;
+      input.max = f.max;
+      input.step = f.step;
+      input.value = f.value;
+      input.required = true;
+
+      wrapper.append(label, input);
+      container.appendChild(wrapper);
+
+    });
+
+    const wrapper = document.createElement("div");
+
+    const label = document.createElement("label");
+    label.htmlFor = "dayofweek";
+    label.textContent = "Day of Week";
+
+    const select = document.createElement("select");
+    select.id = "dayofweek";
+
+    DAYS.forEach((day, index) => {
+
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = day;
+
+      select.appendChild(option);
+
+    });
+
+    select.value = 2;
+
+    wrapper.append(label, select);
+    container.appendChild(wrapper);
+
+  }
+
+  // Apply example presets.
+
+  function applyPreset(name) {
+
+    const preset = PRESETS[name];
+
+    Object.keys(preset).forEach(key => {
+      $(key).value = preset[key];
+    });
+
+  }
+
+  // Read form values.
+
+  function readForm() {
+
+    const body = {};
+
+    FIELDS.forEach(f => {
+
+      const input = $(f.key);
+      const value = input.valueAsNumber;
+
+      if (
+        !Number.isFinite(value) ||
+        value < f.min ||
+        value > f.max
+      ) {
+        throw new Error("Please enter a valid value for " + f.label);
+      }
+
+      body[f.key] = value;
+
+    });
+
+    body.dayofweek = Number($("dayofweek").value);
+
+    return body;
+
+  }
+
+  // Make prediction using FastAPI.
+
+  async function predict() {
+
+    const btn = $("predictBtn");
+    const output = $("result");
+    const mode = $("mode").value;
+
+    btn.disabled = true;
+    output.className = "muted";
+    output.textContent = "Calculating energy prediction...";
+
+    try {
+
+      const body = readForm();
+
+      const response = await fetch(
+        "/predict?mode=" + encodeURIComponent(mode),
+        {
+          method:"POST",
+          headers: {
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(body)
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        showError(response.status, data);
+        return;
+      }
+
+      showResult(data, mode);
+
+    } catch(error) {
+
+      output.className = "error";
+      output.textContent = error.message.includes("Please enter")
+        ? error.message
+        : "Could not connect to the prediction service. Please try again.";
+
+    } finally {
+
+      btn.disabled = false;
+      loadStats();
+
+    }
+
+  }
+
+  // Display API errors.
+
+  function showError(status, data) {
+
+    const output = $("result");
+
+    output.className = "error";
+
+    let message = "Service error (HTTP " + status + ").";
+
+    if (status === 422 && Array.isArray(data.detail)) {
+
+      message += "\n" + data.detail.map(error => {
+
+        const field = Array.isArray(error.loc)
+          ? error.loc.slice(1).join(".")
+          : "input";
+
+        return field + ": " + error.msg;
+
+      }).join("\n");
+
+    }
+
+    output.textContent = message;
+
+  }
+
+  // Display prediction.
+
+  function showResult(data, mode) {
+
+    const output = $("result");
+
+    output.innerHTML = "";
+
+    const prediction = document.createElement("div");
+    prediction.className = "prediction";
+    prediction.textContent = data.prediction_wh + " Wh";
+
+    const description = document.createElement("p");
+    description.className = "muted";
+    description.textContent =
+      "Estimated appliance energy consumption per 10 minutes.";
+
+    const badge = document.createElement("span");
+
+    const isRF = data.model_used === "random_forest";
+
+    badge.className = "badge " + (isRF ? "rf" : "dt");
+    badge.textContent = isRF ? "Random Forest" : "Decision Tree";
+
+    const reason = document.createElement("p");
+    reason.textContent = data.routing_reason;
+
+    const latency = document.createElement("p");
+    latency.className = "muted";
+    latency.textContent =
+      "Latency: " + data.latency_ms +
+      " ms | Request ID: " +
+      String(data.request_id).slice(0, 8);
+
+    output.append(
+      prediction,
+      description,
+      badge,
+      reason,
+      latency
+    );
+
+    addHistory(data, mode);
+
+  }
+
+  // Maintain recent prediction history.
+
+  function addHistory(data, mode) {
+
+    const row = document.createElement("tr");
+
+    const values = [
+      new Date().toLocaleTimeString(),
+      mode,
+      data.prediction_wh,
+      data.model_used,
+      data.latency_ms
+    ];
+
+    values.forEach(value => {
+
+      const cell = document.createElement("td");
+      cell.textContent = value;
+
+      row.appendChild(cell);
+
+    });
+
+    const table = $("history");
+
+    table.insertBefore(row, table.firstChild);
+
+    while (table.children.length > 8) {
+      table.removeChild(table.lastChild);
+    }
+
+  }
+
+  // Check backend health.
+
+  async function loadHealth() {
+
+    try {
+
+      const response = await fetch("/health");
+      const data = await response.json();
+
+      const healthy =
+        response.ok && data.status === "healthy";
+
+      $("dot").style.background =
+        healthy ? "#22c55e" : "#ef4444";
+
+      $("statusText").textContent =
+        healthy ? "Service Healthy" : "Service Unhealthy";
+
+    } catch(error) {
+
+      $("dot").style.background = "#ef4444";
+      $("statusText").textContent = "Service Unreachable";
+
+    }
+
+  }
+
+  // Load monitoring statistics.
+
+  async function loadStats() {
+
+    const box = $("stats");
+
+    box.textContent = "Loading statistics...";
+
+    try {
+
+      const [metricsResponse, driftResponse] = await Promise.all([
+        fetch("/metrics"),
+        fetch("/drift")
+      ]);
+
+      if (!metricsResponse.ok || !driftResponse.ok) {
+        throw new Error("Monitoring API unavailable");
+      }
+
+      const metrics = await metricsResponse.json();
+      const drift = await driftResponse.json();
+
+      const rows = [
+        ["Total Requests", metrics.requests_total],
+        [
+          "Decision Tree / Random Forest",
+          metrics.decision_tree_requests + " / " +
+          metrics.random_forest_requests
+        ],
+        [
+          "Random Forest Share",
+          metrics.rf_share_percent + "%"
+        ],
+        [
+          "Average Latency",
+          metrics.avg_latency_ms + " ms"
+        ],
+        [
+          "P95 Latency",
+          metrics.p95_latency_ms + " ms"
+        ],
+        [
+          "Validation Errors",
+          metrics.validation_errors_422
+        ],
+        [
+          "Server Errors",
+          metrics.server_errors
+        ]
+      ];
+
+      const table = document.createElement("table");
+
+      rows.forEach(([label, value]) => {
+
+        const row = document.createElement("tr");
+
+        const first = document.createElement("td");
+        first.textContent = label;
+
+        const second = document.createElement("td");
+        second.textContent = value ?? "N/A";
+
+        row.append(first, second);
+        table.appendChild(row);
+
+      });
+
+      box.innerHTML = "";
+      box.appendChild(table);
+
+      const status = document.createElement("p");
+      status.style.marginTop = "16px";
+
+      const statusText = document.createElement("strong");
+      statusText.textContent =
+        "Data Drift: " + (drift.overall_status || "Unknown");
+
+      status.appendChild(statusText);
+
+      box.appendChild(status);
+
+      const note = document.createElement("p");
+      note.className = "muted";
+      note.textContent =
+        "Drift status is a monitoring warning and should be investigated.";
+
+      box.appendChild(note);
+
+    } catch(error) {
+
+      box.className = "error";
+      box.textContent = "Could not load monitoring statistics.";
+
+    }
+
+  }
+
+  // Initialize application.
+
+  buildForm();
+
+  $("predictBtn").addEventListener("click", predict);
+
+  $("refreshBtn").addEventListener("click", () => {
+    loadHealth();
+    loadStats();
+  });
+
+  document.querySelectorAll("[data-preset]").forEach(button => {
+
+    button.addEventListener("click", () => {
+      applyPreset(button.dataset.preset);
+    });
+
+  });
+
+  loadHealth();
+  loadStats();
+
+</script>
+
+</body>
+</html>
